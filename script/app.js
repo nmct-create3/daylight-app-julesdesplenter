@@ -24,9 +24,9 @@ const goSun = function(sun, total, now, interval) {
     sun.dataset.time = `${now.getHours()}:${now.getMinutes()}`;
     sun.style.left = procent + '%';
     if (procent < 50) {
-      sun.style.bottom = procent + '%';
+      sun.style.bottom = 2 * procent + '%';
     } else {
-      sun.style.bottom = 100 - procent + '%';
+      sun.style.bottom = 2 * (100 - procent) + '%';
     }
   } else {
     document.querySelector('html').classList.add('is-night');
@@ -39,18 +39,18 @@ const updateSun = function(up, total, sunrise) {
   let sun = document.querySelector('.js-sun');
   let now = new Date(Date.now());
   let procent = (up / total) * 100;
-  if (up <= total) {
+  if (up <= total + 1) {
     sun.dataset.time = `${now.getHours()}:${now.getMinutes()}`;
     sun.style.left = procent + '%';
     if (procent < 50) {
-      sun.style.bottom = procent + '%';
+      sun.style.bottom = 2 * procent + '%';
     } else {
-      sun.style.bottom = 100 - procent + '%';
+      sun.style.bottom = 2 * (100 - procent) + '%';
     }
   }
   let interval = setInterval(function() {
     goSun(sun, total, now, interval);
-  }, 100);
+  }, 1000);
 };
 
 // 4 Zet de zon op de juiste plaats en zorg ervoor dat dit iedere minuut gebeurt.
