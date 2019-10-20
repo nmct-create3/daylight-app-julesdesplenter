@@ -1,5 +1,6 @@
 // _ = helper functions
 let up;
+let minutesLeft;
 
 function _parseMillisecondsIntoReadableTime(timestamp) {
   //Get hours from milliseconds
@@ -21,13 +22,18 @@ const goSun = function(sun, total, now, interval) {
     // console.log(up);
     now.setMinutes(now.getMinutes() + 1);
     let procent = (up / total) * 100;
-    sun.dataset.time = `${now.getHours()}:${now.getMinutes()}`;
+    if (now.getMinutes() < 10) {
+      sun.dataset.time = `${now.getHours()}:0${now.getMinutes()}`;
+    } else {
+      sun.dataset.time = `${now.getHours()}:${now.getMinutes()}`;
+    }
     sun.style.left = procent + '%';
     if (procent < 50) {
       sun.style.bottom = 2 * procent + '%';
     } else {
       sun.style.bottom = 2 * (100 - procent) + '%';
     }
+    minutesLeft.innerHTML = minutesLeft.innerHTML - 1;
   } else {
     document.querySelector('html').classList.add('is-night');
     clearInterval(interval);
@@ -39,18 +45,27 @@ const updateSun = function(up, total, sunrise) {
   let sun = document.querySelector('.js-sun');
   let now = new Date(Date.now());
   let procent = (up / total) * 100;
-  if (up <= total + 1) {
-    sun.dataset.time = `${now.getHours()}:${now.getMinutes()}`;
+  if (up < total) {
+    // console.log(up);
+
+    let procent = (up / total) * 100;
+    if (now.getMinutes() < 10) {
+      sun.dataset.time = `${now.getHours()}:0${now.getMinutes()}`;
+    } else {
+      sun.dataset.time = `${now.getHours()}:${now.getMinutes()}`;
+    }
     sun.style.left = procent + '%';
     if (procent < 50) {
       sun.style.bottom = 2 * procent + '%';
     } else {
       sun.style.bottom = 2 * (100 - procent) + '%';
     }
+    minutesLeft.innerHTML = minutesLeft.innerHTML - 1;
   }
+  // goSun(sun, total, now, interval);
   let interval = setInterval(function() {
     goSun(sun, total, now, interval);
-  }, 1000);
+  }, 60000);
 };
 
 // 4 Zet de zon op de juiste plaats en zorg ervoor dat dit iedere minuut gebeurt.
@@ -65,8 +80,9 @@ let placeSunAndStartMoving = (totalMinutes, sunrise) => {
   // Bekijk of de zon niet nog onder of reeds onder is
   // Anders kunnen we huidige waarden evalueren en de zon updaten via de updateSun functie.
   // PS.: vergeet weer niet om het resterend aantal minuten te updaten en verhoog het aantal verstreken minuten.
-  const sun = document.querySelector('.js-sun');
-  const minutesLeft = document.querySelector('.js-time-left');
+  // const sun = document.querySelector('.js-sun');
+  minutesLeft = document.querySelector('.js-time-left');
+  console.log(minutesLeft);
   let now = new Date(Date.now() - sunrise);
   up = now.getHours() * 60 + now.getMinutes();
   minutesLeft.innerHTML = totalMinutes - up;
